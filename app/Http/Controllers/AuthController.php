@@ -22,7 +22,7 @@ class AuthController extends Controller
             'fullname' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required',
-            'role' => 'required|integer|max:2',
+            // 'role' => 'required|integer|max:2',
         ]);
 
         try {
@@ -31,7 +31,7 @@ class AuthController extends Controller
             $user->fullname = $request->input('fullname');
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
-            $user->role = $request->input('role');
+            $user->role = 1;
             $user->password = app('hash')->make($plainPassword);
 
             $user->save();
