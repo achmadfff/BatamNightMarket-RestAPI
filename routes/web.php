@@ -14,6 +14,9 @@
 $router->group(['prefix' => 'api'], function () use ($router) {
     // Matches "/api/register
     $router->post('register', 'AuthController@register');
- 
+    
     $router->post('login', 'AuthController@login');
+    $router->get('user/profile', ['middleware' => 'auth' , 'uses' => 'ProfileController@index']);
+    $router->post('package/create', 'PackageController@register');
+    $router->get('package/edit?code=/{}', 'PackageController@edit');
  });

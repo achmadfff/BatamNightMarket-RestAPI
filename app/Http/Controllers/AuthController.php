@@ -22,6 +22,7 @@ class AuthController extends Controller
             'fullname' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
+            'role' => 'required|integer|max:1',
         ]);
 
         try {
@@ -30,12 +31,20 @@ class AuthController extends Controller
             $user->fullname = $request->input('fullname');
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
+            $user->role = $request->input('role');
             $user->password = app('hash')->make($plainPassword);
 
             $user->save();
 
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+            // return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+            $credentials = $request->only(['email', 'password']);
+
+            if (! $token = Auth::attempt($credentials)) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+        return $this->respondWithToken($token);
 
         } catch (\Exception $e) {
             //return error message
@@ -55,7 +64,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Email atau Password yang anda masukkan salah'], 401);
         }
 
         return $this->respondWithToken($token);

@@ -32,6 +32,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
     ];
 
+    public function user_point_top_up(){
+
+        return $this->hasOne(user_point_top_up::class,'user_id');
+    }
+
+    public function user_package(){
+        return $this->hasMany(user_package::class,'user_id');
+    }
+
+    public function transaction(){
+        return $this->hasMany(transaction::class,'user_id');
+    }
+
+    protected $primaryKey = 'id';
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -49,6 +64,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return ['sub' => $this->id];
     }
 }
