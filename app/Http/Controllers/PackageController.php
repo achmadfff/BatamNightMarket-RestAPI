@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use  App\UserPackage;
+use App\User;
+use App\UserPackage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -33,7 +34,8 @@ class PackageController extends Controller
                 }
                 return $randomString;
             }
-            $package->code = $this->generateRandomString(5) ;
+            $package->code = generateRandomString(5);
+            $package->user_id = Auth::user()->id;
             $package->save();
             
 
@@ -101,39 +103,4 @@ class PackageController extends Controller
             'data' => null
         ], 200);
     }
-
-    // public function edit($code, Request $request)
-    // {
-    //     $user = new UserPackage ;
-    //     $user->code = findOrfail($code);
-
-    //     $this->validate($request , [
-    //         'package_name' => 'required|string',
-    //         'package_point' => 'required|integer',
-    //         'package_category' => 'required|string',
-    //         'package_description' => 'required|string',
-    //     ]);
-
-    //     $user->package_name = $request->input('package_name');
-    //     $user->package_point = $request->input('package_point');
-    //     $user->package_category = $request->input('package_category');
-    //     $user->package_description = $request->input('package_description');
-
-    //     $update = $user->save();
-
-    //     if($update)
-    //     {
-    //         return response()->json([
-    //             'status' => 200,
-    //             'message' => 'success',
-    //             'data' => [
-    //                 'name' => $user->package_name,
-    //                 'point' => Auth::user()->package_point,
-    //                 'category' => Auth::user()->package_category,
-    //                 'description' => Auth::user()->package_description,
-    //                 'image' => dummy
-    //             ]
-    //         ]);
-    //     }
-    // }
 }

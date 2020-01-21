@@ -15,7 +15,7 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
 
 
     protected $fillable = [
-        'package_name', 'package_point' , 'package_category', 'package_description', 'code',
+        'package_name', 'package_point' , 'package_category', 'package_description', 'code', 'user_id'
     ];
 
 
