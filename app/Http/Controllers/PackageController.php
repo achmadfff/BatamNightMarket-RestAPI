@@ -9,15 +9,6 @@ use Illuminate\Support\Str;
 
 class PackageController extends Controller
 {
-    public  function generateRandomString($length = 5) {
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
     public function register(Request $request)
     {
         $this->validate($request, [
@@ -49,7 +40,7 @@ class PackageController extends Controller
             return response()->json([
                 'status' => 201,
                 'message' => 'success',
-                'data' => $package
+                'data' => null
             ], 201);
         
         } catch (\Exception $e) {
@@ -61,20 +52,54 @@ class PackageController extends Controller
 
     public function edit()
     {
+        $code = $_GET['code'];
         $package = new UserPackage;
-        $get_package = UserPackage::get('package_name');
+        $get_package = UserPackage::where('code', $code)->first();
 
         return response()->json([
             'status' => 200,
             'message' => 'success',
             'data' => [
-                'name' => $get_package
+                'name' => $get_package->package_name,
+                'point' => 0,
+                'category' => $get_package->package_category,
+                'description' => $get_package->package_description,
+                'image' => 'dummy'
             ]
             ], 200);
+    }
+
+    public function detail()
+    {
+
+        $code = $_GET['code'];
+        $detail_package = new UserPackage;
+        $detail = UserPackage::where('code', $code)->first();
 
 
-        
-        
+        return response()->json([
+            'status' => 200,
+            'message' => 'success',
+            'data' => [
+                'code' => $code,
+                'image' => 'dummy',
+                'package_name' => $detail->package_name,
+                'price' => [
+                    'type' => 'points',
+                    'value' => 0
+                ],
+            ],
+                'description' => $detail->package_description
+            ], 200);
+    }
+
+    public function claim()
+    {
+        return response()->json([
+            'status' => 200,
+            'message' => 'success',
+            'data' => null
+        ], 200);
     }
 
     // public function edit($code, Request $request)

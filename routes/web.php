@@ -18,5 +18,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('user/profile', ['middleware' => 'auth' , 'uses' => 'ProfileController@user']);
     $router->get('owner/profile', ['middleware' => 'auth' , 'uses' => 'ProfileController@owner']);
     $router->post('package/create', 'PackageController@register');
+    $router->post('package/claim', 'PackageController@claim');
     $router->get('package/edit', 'PackageController@edit');
+    $router->get('package', 'PackageController@detail');
+    $router->post('upload/image', 'ImageController@store');
  });

@@ -21,6 +21,6 @@ class Admin extends Model implements AuthenticatableContract, AuthorizableContra
     protected $primaryKey = 'id';
 
     public function user_point_top_up(){
-        return $this->hasOne(user_point_top_up::class,'admin_id');
+        return $this->hasOne('App\UserPointTopUp','admin_id');
     }
 }
