@@ -9,22 +9,17 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 
-class Transaction extends Model implements AuthenticatableContract, AuthorizableContract
+class Image extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
     protected $fillable = [
-        'status',
+        'type', 'image',
     ];
 
+    public function Package(){
+        return $this->belongsTo('App\UserPackage');
+    }
 
     protected $primaryKey = 'id';
-
-    public function User(){
-        return $this->belongsTo(User::class);
-    }
-
-    public function user_package(){
-        return $this->belongsTo(UserPackage::class);
-    }
 }
