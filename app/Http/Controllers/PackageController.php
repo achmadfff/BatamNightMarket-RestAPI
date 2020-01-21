@@ -9,6 +9,16 @@ use Illuminate\Support\Str;
 
 class PackageController extends Controller
 {
+    public  function generateRandomString($length = 20)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
     public function register(Request $request)
     {
         $this->validate($request, [
@@ -24,30 +34,20 @@ class PackageController extends Controller
             $package->package_point = $request->input('package_point');
             $package->package_category = $request->input('package_category');
             $package->package_description = $request->input('package_description');
-            function generateRandomString($length = 20) {
-                $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                $charactersLength = strlen($characters);
-                $randomString = '';
-                for ($i = 0; $i < $length; $i++) {
-                    $randomString .= $characters[rand(0, $charactersLength - 1)];
-                }
-                return $randomString;
-            }
-            $package->code = $this->generateRandomString(5) ;
+
+            $package->code = $this->generateRandomString(5);
             $package->save();
-            
+
 
             return response()->json([
                 'status' => 201,
                 'message' => 'success',
                 'data' => null
             ], 201);
-        
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Package Registration Failed!'], 409);
         }
-        
     }
 
     public function edit()
@@ -66,7 +66,7 @@ class PackageController extends Controller
                 'description' => $get_package->package_description,
                 'image' => 'dummy'
             ]
-            ], 200);
+        ], 200);
     }
 
     public function detail()
@@ -89,8 +89,8 @@ class PackageController extends Controller
                     'value' => 0
                 ],
             ],
-                'description' => $detail->package_description
-            ], 200);
+            'description' => $detail->package_description
+        ], 200);
     }
 
     public function claim()
@@ -136,4 +136,46 @@ class PackageController extends Controller
     //         ]);
     //     }
     // }
+    public function recomendation()
+    {
+        // $detail_package = new UserPackage;
+        // $detail = UserPackage::all();
+        // foreach ($detail as $d) {
+        //     $data = ([
+        //         'status' => 200,
+        //         'message' => 'success',
+        //         'data' => [
+        //             'code' => $d->code,
+        //             'name' => $d->package_name,
+        //             'image' => 'dummy',
+        //             'price' => [
+        //                 'type' => $d->package_point,
+        //                 'value' => 3000
+        //             ],
+        //             'description' => $d->package_description
+        //         ]
+        //     ]);
+        //     return response()->json($data);
+        // }
+        $package = new UserPackage;
+        $detail_package = UserPackage::limit(200)->get();
+        $data = [
+            'status' => 200,
+            'message' => 'success',
+            'data' => []
+        ];
+        foreach ($detail_package as $detail => $d) {
+            $data['data'][$detail] = [
+                'code' => $d->code,
+                'name' => $d->package_name,
+                'image' => 'dummy',
+                'price' => [
+                    'type' => $d->package_point,
+                    'value' => 3000
+                ],
+                'description' => $d->package_description
+            ];
+        }
+        return response()->json($data);
+    }
 }
