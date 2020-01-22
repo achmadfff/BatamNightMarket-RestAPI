@@ -14,7 +14,7 @@ class Transaction extends Model implements AuthenticatableContract, Authorizable
     use Authenticatable, Authorizable;
 
     protected $fillable = [
-        'status',
+        'status','user_id','package_id',
     ];
 
 
@@ -24,7 +24,7 @@ class Transaction extends Model implements AuthenticatableContract, Authorizable
         return $this->belongsTo(User::class);
     }
 
-    public function user_package(){
-        return $this->belongsTo(UserPackage::class);
+    public function package(){
+        return $this->belongsTo(UserPackage::class, 'package_id');
     }
 }

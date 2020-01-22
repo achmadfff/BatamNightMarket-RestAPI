@@ -15,7 +15,8 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
 
 
     protected $fillable = [
-        'package_name', 'package_point' , 'package_category', 'package_description', 'code', 'user_id'
+        'package_name', 'package_point' , 'package_category', 'package_description', 'code', 'user_id',
+        'status',
     ];
 
 
@@ -28,7 +29,7 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
     }
 
     public function image(){
-        return $this->hasOne('App\Image','image_id');
+        return $this->hasOne('App\Image','package_id');
     }
 
     protected $primaryKey = 'id';

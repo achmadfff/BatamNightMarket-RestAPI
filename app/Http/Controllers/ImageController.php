@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use  App\Image;
+use Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
@@ -43,33 +44,34 @@ class ImageController extends Controller
                     $varPath = 'images/event/';
                     $path = ''. $varPath;
                     
-                    $imageName = rand().'.'.$extension;
+                    $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
                     File::put($path.$imageName, base64_decode($image));
                     Image::create([
                         'type' => $type,
-                        'image' => $varPath.$imageName
+                        'image' => env('APP_url').'/'.$varPath.$imageName,
+                        'package_id' => Auth::user()->id
                     ]);
                     break;
                 case 'place':
                     $varPath = 'images/place/';
                     $path = ''. $varPath;
                     
-                    $imageName = rand().'.'.$extension;
+                    $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
                     File::put($path.$imageName, base64_decode($image));
                     Image::create([
                         'type' => $type,
-                        'image' => $varPath.$imageName
+                        'image' => env('APP_url').'/'.$varPath.$imageName
                     ]);
                     break;
                 case 'food':
                     $varPath = 'images/food/';
                     $path = ''. $varPath;
                     
-                    $imageName = rand().'.'.$extension;
+                    $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
                     File::put($path.$imageName, base64_decode($image));
                     Image::create([
                         'type' => $type,
-                        'image' => $varPath.$imageName
+                        'image' => env('APP_url').'/'.$varPath.$imageName
                     ]);
                     break;
                 default:

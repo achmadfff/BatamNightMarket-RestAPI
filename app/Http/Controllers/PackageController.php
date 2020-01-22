@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\UserPackage;
+use App\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -36,6 +37,7 @@ class PackageController extends Controller
             }
             $package->code = generateRandomString(5);
             $package->user_id = Auth::user()->id;
+            $package->status = 'active';
             $package->save();
             
 
@@ -88,19 +90,49 @@ class PackageController extends Controller
                 'package_name' => $detail->package_name,
                 'price' => [
                     'type' => 'points',
-                    'value' => 0
+                    'value' => $detail->package_point
                 ],
             ],
                 'description' => $detail->package_description
             ], 200);
     }
 
-    public function claim()
+    public function claim(Request $request)
     {
-        return response()->json([
-            'status' => 200,
-            'message' => 'success',
-            'data' => null
-        ], 200);
+        
+        $package = UserPackage::where([['code', '=', $request->code],['user_id', '=', $request->owner]])->first();
+        
+        if ($package) {
+            if (Auth::user()->point > $package->point) {
+                Transaction::create([
+                    'user_id' => Auth::user()->id,
+                    'package_id' => $package->id,
+                    'status' => 'claimed'
+                ]);
+
+                User::where('id', Auth::user()->id)->update([
+                    'point' => (Auth::user()->point - $package->point)
+                ]);
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'success',
+                    'data' => null
+                ], 200);
+            }else{
+                // Response point kurang
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Point anda kurang'
+                ], 400);
+            }
+        }else{
+            // Response gagal
+            return response()->json([
+                'status' => 400,
+                'message' => 'Failed'
+            ], 400);
+        }
+
     }
 }
