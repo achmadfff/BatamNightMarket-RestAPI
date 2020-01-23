@@ -16,8 +16,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('register', 'AuthController@register');    
     $router->post('login', 'AuthController@login');
     $router->get('user/profile', ['middleware' => 'auth' , 'uses' => 'UserController@profile']);
+    $router->get('user/claim-history', ['middleware' => 'auth' , 'uses' => 'UserController@histories']);
     $router->get('owner/profile', ['middleware' => 'auth' , 'uses' => 'OwnerController@profile']);
-    $router->get('user/claim-history', ['middleware' => 'auth' , 'uses' => 'UserController@claim']);
+    $router->get('owner/package/claim-history', ['middleware' => 'auth' , 'uses' => 'OwnerController@histories']);
     $router->post('package/create', ['middleware' => 'auth' , 'uses' => 'PackageController@register']);
     $router->post('package/claim', ['middleware' => 'auth' , 'uses' => 'PackageController@claim']);
     $router->get('package/edit', ['middleware' => 'auth' , 'uses' => 'PackageController@edit']);

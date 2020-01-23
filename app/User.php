@@ -37,7 +37,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasOne(UserPointTopUp::class,'user_id');
     }
 
-    public function user_package(){
+    public function package(){
         return $this->hasMany(UserPackage::class,'user_id');
     }
 

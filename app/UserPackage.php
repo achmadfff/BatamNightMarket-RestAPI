@@ -20,16 +20,16 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
     ];
 
 
-    public function User(){
+    public function user(){
         return $this->belongsTo(User::class);
     }
     
     public function transaction(){
-        return $this->hasMany(Transaction::class,'package_id');
+        return $this->hasMany('App\Transaction','package_id');
     }
 
     public function image(){
-        return $this->hasOne('App\Image','package_id');
+        return $this->hasMany('App\Image','package_id');
     }
 
     protected $primaryKey = 'id';

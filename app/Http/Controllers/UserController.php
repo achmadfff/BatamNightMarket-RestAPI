@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\UserPackage;
 use App\Transaction;
+use App\Image;
 use Auth;
 class UserController extends Controller
 {
@@ -22,7 +23,7 @@ class UserController extends Controller
                     "name" => Auth::user()->fullname,
                     "point" => [
                         "spend" => 0,
-                        "available" => 0
+                        "available" => Auth::user()->point
                     ],
                     "email" => Auth::user()->email,
                     "role" => "user",
@@ -36,15 +37,15 @@ class UserController extends Controller
         }
     }
 
-    public function claim()
+    public function histories()
     {
         $data = [];
         $transactions = Transaction::where('user_id', Auth::user()->id)->get();
         
         foreach($transactions as $t){
             $data[] = [
-                'code' => $t->code,
-                'image' => $t->package->image->image,
+                'code' => $t->package->code,
+                'image' => $t->package->image,
                 'package_name' => $t->package->package_name,
                 'total_item' => 1,
                 'price' => [
