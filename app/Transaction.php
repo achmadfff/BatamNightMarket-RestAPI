@@ -20,11 +20,13 @@ class Transaction extends Model implements AuthenticatableContract, Authorizable
 
     protected $primaryKey = 'id';
 
-    public function User(){
+    public function User()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function user_package(){
-        return $this->belongsTo(user_package::class);
+    public function user_package()
+    {
+        return $this->belongsTo(UserPackage::class);
     }
 }

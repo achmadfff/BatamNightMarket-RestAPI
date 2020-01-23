@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use  App\UserPackage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -138,44 +139,26 @@ class PackageController extends Controller
     // }
     public function recomendation()
     {
-        // $detail_package = new UserPackage;
-        // $detail = UserPackage::all();
-        // foreach ($detail as $d) {
-        //     $data = ([
-        //         'status' => 200,
-        //         'message' => 'success',
-        //         'data' => [
-        //             'code' => $d->code,
-        //             'name' => $d->package_name,
-        //             'image' => 'dummy',
-        //             'price' => [
-        //                 'type' => $d->package_point,
-        //                 'value' => 3000
-        //             ],
-        //             'description' => $d->package_description
-        //         ]
-        //     ]);
-        //     return response()->json($data);
-        // }
-        $package = new UserPackage;
-        $detail_package = UserPackage::limit(200)->get();
+        $detail_package = UserPackage::all();
         $data = [
             'status' => 200,
             'message' => 'success',
             'data' => []
         ];
         foreach ($detail_package as $detail => $d) {
-            $data['data'][$detail] = [
-                'code' => $d->code,
-                'name' => $d->package_name,
-                'image' => 'dummy',
-                'price' => [
-                    'type' => $d->package_point,
-                    'value' => 3000
-                ],
-                'description' => $d->package_description
-            ];
+            foreach ($d->images as $t) {
+                $data['data'][$detail] = [
+                    'code' => $d->code,
+                    'name' => $d->package_name,
+                    'image' => $t->image,
+                    'price' => [
+                        'type' => 'points',
+                        'value' => $d->package_point
+                    ],
+                    'description' => $d->package_description
+                ];
+            }
         }
-        return response()->json($data);
+        return response()->json($data, 200);
     }
 }

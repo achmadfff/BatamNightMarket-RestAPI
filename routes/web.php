@@ -23,4 +23,5 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('package', 'PackageController@detail');
     $router->post('upload/image', 'ImageController@store');
     $router->get('home/user/package-recommendation', 'PackageController@recomendation');
+    $router->get('user/claim-history', 'ClaimController@userclaim');
 });
