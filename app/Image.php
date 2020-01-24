@@ -14,11 +14,11 @@ class Image extends Model implements AuthenticatableContract, AuthorizableContra
     use Authenticatable, Authorizable;
 
     protected $fillable = [
-        'type', 'image',
+        'type', 'image', 'package_id',
     ];
 
-    public function Package(){
-        return $this->belongsTo('App\UserPackage');
+    public function package(){
+        return $this->belongsTo('App\UserPackage', 'package_id');
     }
 
     protected $primaryKey = 'id';
