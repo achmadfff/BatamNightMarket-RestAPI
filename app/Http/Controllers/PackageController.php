@@ -109,7 +109,7 @@ class PackageController extends Controller
             'message' => 'success',
             'data' => [
                 'code' => $code,
-                'image' => 'dummy',
+                'image' => ($detail->image->count() > 0 ? $detail->image[0]->image : null),
                 'package_name' => $detail->package_name,
                 'price' => [
                     'type' => 'points',

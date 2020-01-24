@@ -41,11 +41,12 @@ class UserController extends Controller
     {
         $data = [];
         $transactions = Transaction::where('user_id', Auth::user()->id)->get();
-        
-        foreach($transactions as $t){
+       
+
+        foreach($transactions as $transaction => $t){
             $data[] = [
                 'code' => $t->package->code,
-                'image' => $t->package->image,
+                'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
                 'package_name' => $t->package->package_name,
                 'total_item' => 1,
                 'price' => [
@@ -57,12 +58,18 @@ class UserController extends Controller
             ];
         };
         
+        if($data === []){
         $response = [
-            'status' => 200,
-            'message' => 'success',
-            'data' => $data
+            'status' => 404,
+            'message' => 'Anda belum Claim apa-apa'
         ];
-
+        }else{
+            $response = [
+                'status' => 200,
+                'message' => 'Success',
+                'data' => $data
+            ];
+        }
         return response()->json($response);
     }
 

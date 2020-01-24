@@ -15,6 +15,7 @@ class OwnerController extends Controller
     {
 
         $user = new User;
+        $user = User::has('package')->first();
         $user->role = Auth::user()->role;
 
         if($user->role === 2){
@@ -25,7 +26,7 @@ class OwnerController extends Controller
                     "name" => Auth::user()->fullname,
                     "package_claimed" => 0,
                     "balances" => [
-                        "point" => 0,
+                        "point" => $user->package->package_point,
                         "price" => 0
                     ],
                     "email" => Auth::user()->email,
