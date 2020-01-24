@@ -17,7 +17,8 @@ class Image extends Model implements AuthenticatableContract, AuthorizableContra
         'type', 'image', 'package_id',
     ];
 
-    public function package(){
+    public function package()
+    {
         return $this->belongsTo('App\UserPackage', 'package_id');
     }
 

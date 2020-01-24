@@ -22,7 +22,8 @@ class PackageController extends Controller
         ]);
 
         try {
-            function generateRandomString($length = 20) {
+            function generateRandomString($length = 20)
+            {
                 $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 $charactersLength = strlen($characters);
                 $randomString = '';
@@ -31,50 +32,48 @@ class PackageController extends Controller
                 }
                 return $randomString;
             }
-            
+
             // Image::create([
-                //     'type' => $type,
-                //     'image' => env('APP_url').'/'.$varPath.$imageName,
-                //     'package_id' => $package->id
-                // ]);
-                $varPath = 'images/food/';
-                if($request->input('image' === null)){
-                    $package = new UserPackage;
-                    $package->package_name = $request->input('package_name');
-                    $package->package_point = $request->input('package_point');
-                    $package->package_category = $request->input('package_category');
-                    $package->package_description = $request->input('package_description');
-                    $package->code = generateRandomString(5);
-                    $package->user_id = Auth::user()->id;
-                    $package->status = 'active';
-                    $package->save();
-                }else{
-                    $package = new UserPackage;
-                    $package->package_name = $request->input('package_name');
-                    $package->package_point = $request->input('package_point');
-                    $package->package_category = $request->input('package_category');
-                    $package->package_description = $request->input('package_description');
-                    $package->code = generateRandomString(5);
-                    $package->user_id = Auth::user()->id;
-                    $package->status = 'active';
-                    $package->save();
-                    Image::create([
-                        'type' => $package->package_category,
-                        'package_id' => $package->id,
-                        'image' => env('APP_url').'/'.$varPath.$request->input('image')
-                    ]);
-                }
+            //     'type' => $type,
+            //     'image' => env('APP_url').'/'.$varPath.$imageName,
+            //     'package_id' => $package->id
+            // ]);
+            $varPath = 'images/food/';
+            if ($request->input('image' === null)) {
+                $package = new UserPackage;
+                $package->package_name = $request->input('package_name');
+                $package->package_point = $request->input('package_point');
+                $package->package_category = $request->input('package_category');
+                $package->package_description = $request->input('package_description');
+                $package->code = generateRandomString(5);
+                $package->user_id = Auth::user()->id;
+                $package->status = 'active';
+                $package->save();
+            } else {
+                $package = new UserPackage;
+                $package->package_name = $request->input('package_name');
+                $package->package_point = $request->input('package_point');
+                $package->package_category = $request->input('package_category');
+                $package->package_description = $request->input('package_description');
+                $package->code = generateRandomString(5);
+                $package->user_id = Auth::user()->id;
+                $package->status = 'active';
+                $package->save();
+                Image::create([
+                    'type' => $package->package_category,
+                    'package_id' => $package->id,
+                    'image' => env('APP_url') . '/' . $varPath . $request->input('image')
+                ]);
+            }
             return response()->json([
                 'status' => 201,
                 'message' => 'success',
                 'data' => null
             ], 201);
-        
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Package Registration Failed!'], 409);
         }
-        
     }
 
     public function edit()
@@ -93,7 +92,7 @@ class PackageController extends Controller
                 'description' => $get_package->package_description,
                 'image' => 'dummy'
             ]
-            ], 200);
+        ], 200);
     }
 
     public function detail()
@@ -116,55 +115,76 @@ class PackageController extends Controller
                     'value' => $detail->package_point
                 ],
             ],
-                'description' => $detail->package_description
-            ], 200);
+            'description' => $detail->package_description
+        ], 200);
     }
 
     public function claim(Request $request)
     {
-        
-        $package = UserPackage::where([['code', '=', $request->code],['user_id', '=', $request->owner]])->first();
+
+        $package = UserPackage::where([['code', '=', $request->code], ['user_id', '=', $request->owner]])->first();
         // $transaction = Transaction::where([['status', '=', 'claimed'],['package_id', '=',$package->id ]])->first();
         // if ($transaction) {
 
         //         return response()->json([
         //             'message' => 'Package claimed'
         //         ], 404);
-            
+
 
         // }else 
-        if($package){
-                if (Auth::user()->point >= $package->package_point) {
-                    Transaction::create([
-                        'user_id' => Auth::user()->id,
-                        'package_id' => $package->id,
-                        'status' => 'claimed'
-                    ]);
-    
-                    User::where('id', Auth::user()->id)->update([
-                        'point' => (Auth::user()->point - $package->package_point)
-                    ]);
-    
-                    return response()->json([
-                        'status' => 200,
-                        'message' => 'success',
-                        'data' => null
-                    ], 200);
-                }else{
-                    // Response point kurang
-                    return response()->json([
-                        'status' => 400,
-                        'message' => 'Point anda kurang'
-                    ], 400);
-                }
+        if ($package) {
+            if (Auth::user()->point >= $package->package_point) {
+                Transaction::create([
+                    'user_id' => Auth::user()->id,
+                    'package_id' => $package->id,
+                    'status' => 'claimed'
+                ]);
 
-        }else{
+                User::where('id', Auth::user()->id)->update([
+                    'point' => (Auth::user()->point - $package->package_point)
+                ]);
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'success',
+                    'data' => null
+                ], 200);
+            } else {
+                // Response point kurang
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Point anda kurang'
+                ], 400);
+            }
+        } else {
             // Response gagal
             return response()->json([
                 'status' => 400,
                 'message' => 'Failed'
             ], 400);
         }
+    }
 
+    public function recomendation()
+    {
+        $detail_package = UserPackage::limit(5)->get();
+        $data = [
+            'status' => 200,
+            'message' => 'success',
+            'data' => []
+        ];
+        foreach ($detail_package as $detail => $d) {
+            $data['data'][$detail] = [
+                'code' => $d->code,
+                'name' => $d->package_name,
+                'image' => ($d->image->count() > 0  ? $d->image[0]->image : null),
+                'price' => [
+                    'type' => 'points',
+                    'value' => $d->package_point
+                ],
+                'description' => $d->package_description
+            ];
+        }
+        return response()->json($data, 200);
     }
 }

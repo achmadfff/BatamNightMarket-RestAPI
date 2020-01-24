@@ -20,7 +20,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'fullname', 'email' , 'password',
+        'fullname', 'email', 'password',
     ];
 
     /**
@@ -32,17 +32,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
     ];
 
-    public function user_point_top_up(){
+    public function user_point_top_up()
+    {
 
-        return $this->hasOne(UserPointTopUp::class,'user_id');
+        return $this->hasOne(UserPointTopUp::class, 'user_id');
     }
 
-    public function package(){
-        return $this->hasMany(UserPackage::class,'user_id');
+    public function package()
+    {
+        return $this->hasMany(UserPackage::class, 'user_id');
     }
 
-    public function transaction(){
-        return $this->hasMany(Transaction::class,'user_id');
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class, 'user_id');
     }
 
     protected $primaryKey = 'id';
