@@ -139,25 +139,23 @@ class PackageController extends Controller
     // }
     public function recomendation()
     {
-        $detail_package = UserPackage::all();
+        $detail_package = UserPackage::limit(5)->get();
         $data = [
             'status' => 200,
             'message' => 'success',
             'data' => []
         ];
         foreach ($detail_package as $detail => $d) {
-            foreach ($d->images as $t) {
-                $data['data'][$detail] = [
-                    'code' => $d->code,
-                    'name' => $d->package_name,
-                    'image' => $t->image,
-                    'price' => [
-                        'type' => 'points',
-                        'value' => $d->package_point
-                    ],
-                    'description' => $d->package_description
-                ];
-            }
+            $data['data'][$detail] = [
+                'code' => $d->code,
+                'name' => $d->package_name,
+                'image' => ($d->image->count() > 0  ? $d->image[0]->image : null),
+                'price' => [
+                    'type' => 'points',
+                    'value' => $d->package_point
+                ],
+                'description' => $d->package_description
+            ];
         }
         return response()->json($data, 200);
     }

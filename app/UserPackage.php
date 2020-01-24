@@ -28,7 +28,7 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
     {
         return $this->hasMany(transaction::class, 'package_id');
     }
-    public function images()
+    public function image()
     {
         return $this->hasMany('App\Image', 'packages_id');
     }
