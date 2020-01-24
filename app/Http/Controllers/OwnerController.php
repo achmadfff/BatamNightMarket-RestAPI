@@ -47,12 +47,12 @@ class OwnerController extends Controller
         
         $transactions = Transaction::whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
-        })->get();
+        })->has('user')->get();
         
         foreach($transactions as $t){
             $data[] = [
                 'code' => $t->package->code,
-                'image' => $t->package->image,
+                'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
                 'package_name' => $t->package->package_name,
                 'total_item' => 1,
                 'price' => [
@@ -61,7 +61,7 @@ class OwnerController extends Controller
                 ],
                 'claimed_date' => $t->created_at,
                 'description' => $t->package->package_description,
-                'claimed_by' => $t->package->user->fullname,
+                'claimed_by' => $t->user->fullname,
             ];
         };
         
