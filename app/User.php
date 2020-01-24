@@ -38,14 +38,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasOne(UserPointTopUp::class, 'user_id');
     }
 
-    public function User_package()
+    public function package()
     {
         return $this->hasMany(UserPackage::class, 'user_id');
     }
 
     public function transaction()
     {
-        return $this->hasMany(transaction::class, 'user_id');
+        return $this->hasMany(Transaction::class, 'user_id');
     }
 
     protected $primaryKey = 'id';

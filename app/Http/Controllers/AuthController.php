@@ -31,12 +31,11 @@ class AuthController extends Controller
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
             $user->role = 1;
+            $user->point = 20000;
             $user->password = app('hash')->make($plainPassword);
 
             $user->save();
 
-            //return successful response
-            // return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
             $credentials = $request->only(['email', 'password']);
 
             if (! $token = Auth::attempt($credentials)) {
