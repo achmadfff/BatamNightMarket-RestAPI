@@ -73,7 +73,7 @@ class AuthController extends Controller
         } else if (Auth::user()->role === 2) {
             return $this->respondWithTokenowner($token);
         } else {
-            return response()->json(['message' => 'User Registration Failed!'], 409);
+            return response()->json(['message' => 'User Login Failed!'], 409);
         }
     }
 }
