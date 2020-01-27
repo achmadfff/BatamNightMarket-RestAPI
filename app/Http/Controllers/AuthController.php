@@ -38,22 +38,26 @@ class AuthController extends Controller
 
             $credentials = $request->only(['email', 'password']);
 
-            if (! $token = Auth::attempt($credentials)) {
+            if (!$token = Auth::attempt($credentials)) {
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
 
-        return $this->respondWithToken($token);
-
+            if (Auth::user()->role === 1) {
+                return $this->respondWithTokenuser($token);
+            } else if (Auth::user()->role === 2) {
+                return $this->respondWithTokenowner($token);
+            } else {
+                return response()->json(['message' => 'User Registration Failed!'], 409);
+            }
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User Registration Failed!'], 409);
         }
-
     }
 
     public function login(Request $request)
     {
-          //validate incoming request 
+        //validate incoming request 
         $this->validate($request, [
             'email' => 'required|string',
             'password' => 'required|string',
@@ -64,8 +68,12 @@ class AuthController extends Controller
         if (! $token = Auth::attempt($credentials)) {
             return response()->json(['message' => 'The email or password you entered is incorrect'], 401);
         }
-
-        return $this->respondWithToken($token);
+        if (Auth::user()->role === 1) {
+            return $this->respondWithTokenuser($token);
+        } else if (Auth::user()->role === 2) {
+            return $this->respondWithTokenowner($token);
+        } else {
+            return response()->json(['message' => 'User Login Failed!'], 409);
+        }
     }
-
 }

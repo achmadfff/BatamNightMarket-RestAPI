@@ -35,7 +35,7 @@ class OwnerController extends Controller
                     "role" => "owner",
                 ]
             ], 200);
-        } else{
+        } else {
             return response()->json([
                 'status' => 400,
                 'message' => 'failed'
@@ -46,12 +46,12 @@ class OwnerController extends Controller
     public function histories()
     {
         $data = [];
-        
+
         $transactions = Transaction::whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
         })->has('user')->get();
-        
-        foreach($transactions as $t){
+
+        foreach ($transactions as $t) {
             $data[] = [
                 'code' => $t->package->code,
                 'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
@@ -66,7 +66,7 @@ class OwnerController extends Controller
                 'claimed_by' => $t->user->fullname,
             ];
         };
-        
+
         $response = [
             'status' => 200,
             'message' => 'success',
