@@ -11,7 +11,7 @@
 |
 */
 
-$router->group(['prefix' => 'api'], function () use ($router) {
+
     // Matches "/api/register
     $router->post('register', 'AuthController@register');
     $router->post('login', 'AuthController@login');
@@ -25,4 +25,4 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('package', ['middleware' => 'auth', 'uses' => 'PackageController@detail']);
     $router->post('upload/image', ['middleware' => 'auth', 'uses' => 'ImageController@store']);
     $router->get('home/user/package-recommendation', 'PackageController@recomendation');
-});
+

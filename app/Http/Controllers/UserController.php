@@ -15,6 +15,9 @@ class UserController extends Controller
 
         $user = new User;
         $user->role = Auth::user()->role;
+        $spend = UserPackage::whereHas('transaction', function($query){
+            $query->where('user_id',Auth::user()->id);
+        })->has('user')->get('package_point')->sum('package_point');
         if($user->role === 1){
             return response()->json([
                 "status" => 200,
@@ -22,7 +25,7 @@ class UserController extends Controller
                 "data" => [
                     "name" => Auth::user()->fullname,
                     "point" => [
-                        "spend" => 0,
+                        "spend" => $spend,
                         "available" => Auth::user()->point
                     ],
                     "email" => Auth::user()->email,

@@ -20,9 +20,9 @@ class Transaction extends Model implements AuthenticatableContract, Authorizable
 
     protected $primaryKey = 'id';
 
-    public function User()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->where('role', 1);
     }
 
     public function package()
