@@ -17,17 +17,18 @@ class OwnerController extends Controller
         $user = new User;
         $user = User::has('package')->first();
         $user->role = Auth::user()->role;
-
-
-        if ($user->role === 2) {
+        $claimed = Transaction::whereHas('package', function ($query) {
+            $query->where('user_id', '=', Auth::user()->id);
+        })->has('user')->count();
+        if($user->role === 2){
             return response()->json([
                 "status" => 200,
                 "message" => "success",
                 "data" => [
                     "name" => Auth::user()->fullname,
-                    "package_claimed" => 0,
+                    "package_claimed" => $claimed,
                     "balances" => [
-                        "point" => 1000,
+                        "point" => Auth::user()->point,
                         "price" => 0
                     ],
                     "email" => Auth::user()->email,

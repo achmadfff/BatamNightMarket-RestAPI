@@ -87,10 +87,10 @@ class PackageController extends Controller
             'message' => 'success',
             'data' => [
                 'name' => $get_package->package_name,
-                'point' => 0,
+                'point' => $get_package->package_point,
                 'category' => $get_package->package_category,
                 'description' => $get_package->package_description,
-                'image' => 'dummy'
+                'image' => ($get_package->image->count() > 0 ? $get_package->image[0]->image : null)
             ]
         ], 200);
     }
@@ -99,7 +99,7 @@ class PackageController extends Controller
     {
 
         $code = $_GET['code'];
-        $detail_package = new UserPackage;
+        $detail_package = new UserPackage;  
         $detail = UserPackage::where('code', $code)->first();
 
 
