@@ -14,7 +14,7 @@ class Controller extends BaseController
             'token' => $token,
             'role' => 'user',
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 600
+            'expires_in' => env('JWT_TTL') . ' minute'
         ], 200);
     }
     protected function respondWithTokenowner($token)
@@ -23,7 +23,7 @@ class Controller extends BaseController
             'token' => $token,
             'role' => 'owner',
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 600
+            'expires_in' => env('JWT_TTL') . ' minute'
         ], 200);
     }
 }
