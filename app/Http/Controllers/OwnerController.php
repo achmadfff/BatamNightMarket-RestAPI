@@ -20,7 +20,7 @@ class OwnerController extends Controller
         $claimed = Transaction::whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
         })->has('user')->count();
-        if($user->role === 2){
+        if ($user->role === 2) {
             return response()->json([
                 "status" => 200,
                 "message" => "success",
@@ -56,7 +56,7 @@ class OwnerController extends Controller
                 'code' => $t->package->code,
                 'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
                 'package_name' => $t->package->package_name,
-                'total_item' => 1,
+                'package_category' => $t->package->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $t->package->package_point
