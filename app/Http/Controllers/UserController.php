@@ -7,6 +7,7 @@ use App\UserPackage;
 use App\Transaction;
 use App\Image;
 use Auth;
+
 class UserController extends Controller
 {
 
@@ -15,24 +16,28 @@ class UserController extends Controller
 
         $user = new User;
         $user->role = Auth::user()->role;
-        $spend = UserPackage::whereHas('transaction', function($query){
-            $query->where('user_id',Auth::user()->id);
-        })->has('user')->get('package_point')->sum('package_point');
-        if($user->role === 1){
+        // $a = UserPackage::whereHas('transaction', function ($query) {
+        //     $query->where('user_id', '=', Auth::user()->id);
+        // })->has('user')->count();
+
+
+
+
+        if ($user->role === 1) {
             return response()->json([
                 "status" => 200,
                 "message" => "success",
                 "data" => [
                     "name" => Auth::user()->fullname,
                     "point" => [
-                        "spend" => $spend,
+                        "spend" => Auth::user()->spend(),
                         "available" => Auth::user()->point
                     ],
                     "email" => Auth::user()->email,
                     "role" => "user",
                 ]
             ], 200);
-        }else{
+        } else {
             return response()->json([
                 'status' => 400,
                 'message' => 'failed'
@@ -44,14 +49,14 @@ class UserController extends Controller
     {
         $data = [];
         $transactions = Transaction::where('user_id', Auth::user()->id)->get();
-       
 
-        foreach($transactions as $transaction => $t){
+
+        foreach ($transactions as $transaction => $t) {
             $data[] = [
                 'code' => $t->package->code,
                 'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
                 'package_name' => $t->package->package_name,
-                'total_item' => 1,
+                'package_category' => $t->package->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $t->package->package_point
@@ -60,13 +65,13 @@ class UserController extends Controller
                 'description' => $t->package->package_description
             ];
         };
-        
-        if($data === []){
-        $response = [
-            'status' => 404,
-            'message' => 'Anda belum Claim apa-apa'
-        ];
-        }else{
+
+        if ($data === []) {
+            $response = [
+                'status' => 404,
+                'message' => 'Anda belum Claim apa-apa'
+            ];
+        } else {
             $response = [
                 'status' => 200,
                 'message' => 'Success',
@@ -75,5 +80,4 @@ class UserController extends Controller
         }
         return response()->json($response);
     }
-
 }

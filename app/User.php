@@ -42,6 +42,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->hasMany(UserPackage::class, 'user_id');
     }
+    public function spend()
+    {
+        return $this->hasMany(Transaction::class, 'user_id')->join('user_packages', 'package_id', 'user_packages.id')->sum('package_point');
+    }
+
 
     public function transaction()
     {

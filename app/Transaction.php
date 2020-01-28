@@ -25,6 +25,7 @@ class Transaction extends Model implements AuthenticatableContract, Authorizable
         return $this->belongsTo(User::class, 'user_id')->where('role', 1);
     }
 
+
     public function package()
     {
         return $this->belongsTo(UserPackage::class, 'package_id');
