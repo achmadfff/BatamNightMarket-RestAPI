@@ -14,7 +14,7 @@ class Controller extends BaseController
             'token' => $token,
             'role' => 'user',
             'token_type' => 'bearer',
-            'expires_in' => env('JWT_TTL') . ' minute'
+            'expires_in' => env('JWT_TTL').' Minute'
         ], 200);
     }
     protected function respondWithTokenowner($token)

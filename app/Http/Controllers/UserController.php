@@ -13,17 +13,7 @@ class UserController extends Controller
 
     public function profile()
     {
-
-        $user = new User;
-        $user->role = Auth::user()->role;
-        // $a = UserPackage::whereHas('transaction', function ($query) {
-        //     $query->where('user_id', '=', Auth::user()->id);
-        // })->has('user')->count();
-
-
-
-
-        if ($user->role === 1) {
+        if (Auth::user()->role === 1) {
             return response()->json([
                 "status" => 200,
                 "message" => "success",
@@ -49,14 +39,12 @@ class UserController extends Controller
     {
         $data = [];
         $transactions = Transaction::where('user_id', Auth::user()->id)->get();
-
-
         foreach ($transactions as $transaction => $t) {
             $data[] = [
                 'code' => $t->package->code,
                 'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
                 'package_name' => $t->package->package_name,
-                'package_category' => $t->package->package_category,
+                'category' => $t->package->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $t->package->package_point
@@ -67,10 +55,14 @@ class UserController extends Controller
         };
 
         if ($data === []) {
-            $response = [
-                'status' => 404,
-                'message' => 'Anda belum Claim apa-apa'
-            ];
+            return response()->json(
+
+                [
+                    'status' => 404,
+                    'message' => 'You have not claim anything '
+                ],
+                400
+            );
         } else {
             $response = [
                 'status' => 200,
