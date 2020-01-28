@@ -12,20 +12,14 @@ class UserController extends Controller
 
     public function profile()
     {
-
-        $user = new User;
-        $user->role = Auth::user()->role;
-        $spend = UserPackage::whereHas('transaction', function($query){
-            $query->where('user_id', '=',Auth::user()->id);
-        })->sum('package_point');
-        if($user->role === 1){
+        if(Auth::user()->role === 1){
             return response()->json([
                 "status" => 200,
                 "message" => "success",
                 "data" => [
                     "name" => Auth::user()->fullname,
                     "point" => [
-                        "spend" => $spend,
+                        "spend" => Auth::user()->spend(),
                         "available" => Auth::user()->point
                     ],
                     "email" => Auth::user()->email,
@@ -44,17 +38,12 @@ class UserController extends Controller
     {
         $data = [];
         $transactions = Transaction::where('user_id', Auth::user()->id)->get();
-        $total = Transaction::where('user_id', Auth::user()->id)->count();
-        // $total = Transaction::whereHas('package', function($query){
-        //     $query->where('user_id', '=',Auth::user()->id);
-        // })->has('user')->get('package_point')->count('package_point');
-        // $total = Transaction::where('package_id',Auth::user()->package->count()>0?Auth::user()->package[0]->id:null)->get();
         foreach($transactions as $transaction => $t){
             $data[] = [
                 'code' => $t->package->code,
                 'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
                 'package_name' => $t->package->package_name,
-                'total_item' => $total,
+                'category' => $t->package->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $t->package->package_point
