@@ -13,14 +13,10 @@ class OwnerController extends Controller
 
     public function profile()
     {
-
-        $user = new User;
-        $user = User::has('package')->first();
-        $user->role = Auth::user()->role;
         $claimed = Transaction::whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
         })->has('user')->count();
-        if ($user->role === 2) {
+        if (Auth::user()->role === 2) {
             return response()->json([
                 "status" => 200,
                 "message" => "success",
@@ -46,11 +42,9 @@ class OwnerController extends Controller
     public function histories()
     {
         $data = [];
-
         $transactions = Transaction::whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
         })->has('user')->get();
-
         foreach ($transactions as $t) {
             $data[] = [
                 'code' => $t->package->code,
