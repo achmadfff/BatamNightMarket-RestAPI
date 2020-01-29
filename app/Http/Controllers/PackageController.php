@@ -99,7 +99,7 @@ class PackageController extends Controller
     {
 
         $code = $_GET['code'];
-        $detail_package = new UserPackage;  
+        $detail_package = new UserPackage;
         $detail = UserPackage::where('code', $code)->first();
 
 
@@ -134,11 +134,6 @@ class PackageController extends Controller
 
         if ($package) {
             if (Auth::user()->point >= $package->package_point) {
-                Transaction::create([
-                    'user_id' => Auth::user()->id,
-                    'package_id' => $package->id,
-                    'status' => 'claimed'
-                ]);
 
                 $update = User::where('id', Auth::user()->id)->update([
                     'point' => (Auth::user()->point - $package->package_point)
@@ -152,8 +147,18 @@ class PackageController extends Controller
                         User::where('id', $request->owner)->update([
                             'point' => ($user->point)
                         ]);
+                        return response()->json([
+                            'status' => 401,
+                            'message' => 'Failed',
+                            'data' => null
+                        ], 400);
                     }
                 }
+                Transaction::create([
+                    'user_id' => Auth::user()->id,
+                    'package_id' => $package->id,
+                    'status' => 'claimed'
+                ]);
 
 
                 return response()->json([
