@@ -138,9 +138,9 @@ class PackageController extends Controller
         //         return response()->json([
         //             'message' => 'Package claimed'
         //         ], 404);
-
-
         // }else 
+        $user = User::where('id', $request->owner)->first();
+
         if ($package) {
             if (Auth::user()->point >= $package->package_point) {
                 Transaction::create([
@@ -149,9 +149,21 @@ class PackageController extends Controller
                     'status' => 'claimed'
                 ]);
 
-                User::where('id', Auth::user()->id)->update([
+                $update = User::where('id', Auth::user()->id)->update([
                     'point' => (Auth::user()->point - $package->package_point)
                 ]);
+                if ($update) {
+                    if (Auth::user()->role === 1) {
+                        User::where('id', $request->owner)->update([
+                            'point' => ($user->point + $package->package_point)
+                        ]);
+                    } else {
+                        User::where('id', $request->owner)->update([
+                            'point' => ($user->point)
+                        ]);
+                    }
+                }
+
 
                 return response()->json([
                     'status' => 200,

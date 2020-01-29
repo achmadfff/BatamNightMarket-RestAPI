@@ -7,12 +7,13 @@ use App\UserPackage;
 use App\Transaction;
 use App\Image;
 use Auth;
+
 class UserController extends Controller
 {
 
     public function profile()
     {
-        if(Auth::user()->role === 1){
+        if (Auth::user()->role === 1) {
             return response()->json([
                 "status" => 200,
                 "message" => "success",
@@ -26,7 +27,7 @@ class UserController extends Controller
                     "role" => "user",
                 ]
             ], 200);
-        }else{
+        } else {
             return response()->json([
                 'status' => 400,
                 'message' => 'failed'
@@ -38,7 +39,7 @@ class UserController extends Controller
     {
         $data = [];
         $transactions = Transaction::where('user_id', Auth::user()->id)->get();
-        foreach($transactions as $transaction => $t){
+        foreach ($transactions as $transaction => $t) {
             $data[] = [
                 'code' => $t->package->code,
                 'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
@@ -52,16 +53,17 @@ class UserController extends Controller
                 'description' => $t->package->package_description
             ];
         };
-        
-        if($data === []){
+
+        if ($data === []) {
             return response()->json(
 
                 [
                     'status' => 404,
                     'message' => 'You have not claim anything '
-                ],400
+                ],
+                400
             );
-        }else{
+        } else {
             $response = [
                 'status' => 200,
                 'message' => 'Success',
@@ -70,5 +72,4 @@ class UserController extends Controller
         }
         return response()->json($response);
     }
-
 }
