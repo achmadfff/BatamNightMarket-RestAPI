@@ -56,7 +56,7 @@ class UserController extends Controller
         $user->password = app('hash')->make($newPassword);
         
         
-            if($oldPassword === '' && $newPassword === ''){
+            if($oldPassword === '' || $newPassword === ''){
                 $update = User::where('id', Auth::user()->id)->update([
                     'fullname' => $user->fullname,
                     'email' => $user->email
