@@ -78,45 +78,54 @@ class PackageController extends Controller
 
     public function edit()
     {
+        // $transaction = UserPackage::where('user_id', Auth::user()->id)->first();
+        
         $code = $_GET['code'];
         $package = new UserPackage;
         $get_package = UserPackage::where('code', $code)->first();
-
+        if(Auth::user()->id === $get_package->user_id){
+            return response()->json([
+                'status' => 200,
+                'message' => 'success',
+                'data' => [
+                    'name' => $get_package->package_name,
+                    'point' => $get_package->package_point,
+                    'category' => $get_package->package_category,
+                    'description' => $get_package->package_description,
+                    'image' => ($get_package->image->count() > 0 ? $get_package->image[0]->image : null)
+                    ]
+                ], 200);
+        }else{
         return response()->json([
-            'status' => 200,
-            'message' => 'success',
-            'data' => [
-                'name' => $get_package->package_name,
-                'point' => $get_package->package_point,
-                'category' => $get_package->package_category,
-                'description' => $get_package->package_description,
-                'image' => ($get_package->image->count() > 0 ? $get_package->image[0]->image : null)
-            ]
-        ], 200);
+            'status' => 400,
+            'message' => 'failed'
+        ], 400);
+    }
     }
 
     public function detail()
     {
+        
 
         $code = $_GET['code'];
         $detail_package = new UserPackage;  
         $detail = UserPackage::where('code', $code)->first();
-
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'success',
-            'data' => [
-                'code' => $code,
-                'image' => ($detail->image->count() > 0 ? $detail->image[0]->image : null),
-                'package_name' => $detail->package_name,
-                'price' => [
-                    'type' => 'points',
-                    'value' => $detail->package_point
+        
+            return response()->json([
+                'status' => 200,
+                'message' => 'success',
+                'data' => [
+                    'code' => $code,
+                    'image' => ($detail->image->count() > 0 ? $detail->image[0]->image : null),
+                    'package_name' => $detail->package_name,
+                    'price' => [
+                        'type' => 'points',
+                        'value' => $detail->package_point
+                    ],
                 ],
-            ],
-            'description' => $detail->package_description
-        ], 200);
+                'description' => $detail->package_description
+            ], 200);
+        
     }
 
     public function claim(Request $request)
@@ -153,14 +162,14 @@ class PackageController extends Controller
                 // Response point kurang
                 return response()->json([
                     'status' => 400,
-                    'message' => 'Point anda kurang'
+                    'message' => 'Your points are not enough'
                 ], 400);
             }
         } else {
             // Response gagal
             return response()->json([
                 'status' => 400,
-                'message' => 'Failed'
+                'message' => 'The code or owner that you insert wrong'
             ], 400);
         }
     }
