@@ -69,4 +69,29 @@ class OwnerController extends Controller
 
         return response()->json($response);
     }
+
+    public function list()
+    {   
+        $data = [];
+        $packages = UserPackage::where('user_id', Auth::user()->id)->get();
+
+        foreach($packages as $package){
+            $data[] = [
+                'code' => $package->code,
+                'name' => $package->package_name,
+                'image' => ($package->image->count() > 0  ? $package->image[0]->image : null),
+                'price' => [
+                    'type' => 'points',
+                    'value' => $package->package_point
+                ],
+                'description' => $package->package_description
+            ];
+        };
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'success',
+            'data' => $data
+        ],200);
+    }
 }
