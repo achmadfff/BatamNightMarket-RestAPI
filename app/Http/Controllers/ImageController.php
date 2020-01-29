@@ -13,7 +13,6 @@ class ImageController extends Controller
 {
     public function store(Request $request)
     {   
-        $images = new Image;
         $image = $request->image;  // your base64 encoded
         $type = $request->type;
 
@@ -39,22 +38,21 @@ class ImageController extends Controller
         if ($allowed) {
             $image = str_replace('data:image/'.$extension.';base64,', '', $image);
             $image = str_replace(' ', '+', $image);
-            $package = UserPackage::where('user_id', '=', Auth::user()->id)->first();
             switch ($type) {
                 case 'event':
                     $varPath = 'images/event/';
                     $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
-                    File::put($path.$imageName, base64_decode($image));
+                    File::put($varPath.$imageName, base64_decode($image));
                     break;
                 case 'place':
                     $varPath = 'images/place/';
                     $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
-                    File::put($path.$imageName, base64_decode($image));
+                    File::put($varPath.$imageName, base64_decode($image));
                     break;
                 case 'food':
                     $varPath = 'images/food/';
                     $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
-                    File::put($path.$imageName, base64_decode($image));
+                    File::put($varPath.$imageName, base64_decode($image));
                     break;
                 default:
                     $data = [
@@ -70,7 +68,7 @@ class ImageController extends Controller
                 'status' => 200,
                 'message' => 'success',
                 'data' => [
-                    'image_url' => env('ASSETS_URL').$varPath.$imageName
+                    'image_url' => env('APP_url').'/'.$varPath.$imageName
                 ]
             ];
         }else{

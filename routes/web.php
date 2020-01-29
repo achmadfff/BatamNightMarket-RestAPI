@@ -24,6 +24,7 @@
     $router->post('package/create', ['middleware' => 'auth', 'uses' => 'PackageController@register']);
     $router->post('package/claim', ['middleware' => 'auth', 'uses' => 'PackageController@claim']);
     $router->get('package/edit', ['middleware' => 'auth', 'uses' => 'PackageController@edit']);
+    $router->post('package/update', ['middleware' => 'auth', 'uses' => 'PackageController@update']);
     $router->get('package', ['middleware' => 'auth', 'uses' => 'PackageController@detail']);
     $router->post('upload/image', ['middleware' => 'auth', 'uses' => 'ImageController@store']);
     $router->get('home/user/package-recommendation', ['middleware' => 'auth', 'uses' => 'PackageController@recomendation'] );
