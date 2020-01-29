@@ -20,6 +20,7 @@
     $router->get('user/claim-history', ['middleware' => 'auth', 'uses' => 'UserController@histories']);
     $router->get('owner/profile', ['middleware' => 'auth', 'uses' => 'OwnerController@profile']);
     $router->get('owner/package/claim-history', ['middleware' => 'auth', 'uses' => 'OwnerController@histories']);
+    $router->get('owner/package/list', ['middleware' => 'auth', 'uses' => 'OwnerController@list']);
     $router->post('package/create', ['middleware' => 'auth', 'uses' => 'PackageController@register']);
     $router->post('package/claim', ['middleware' => 'auth', 'uses' => 'PackageController@claim']);
     $router->get('package/edit', ['middleware' => 'auth', 'uses' => 'PackageController@edit']);
