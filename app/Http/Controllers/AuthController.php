@@ -31,7 +31,7 @@ class AuthController extends Controller
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
             $user->role = 1;
-            $user->point = 20000;
+            $user->point = 0;
             $user->password = app('hash')->make($plainPassword);
             $user->save();
 
