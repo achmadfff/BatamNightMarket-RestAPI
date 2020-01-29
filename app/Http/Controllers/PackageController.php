@@ -15,10 +15,11 @@ class PackageController extends Controller
     public function register(Request $request)
     {
         $this->validate($request, [
-            'package_name' => 'required|string',
-            'package_point' => 'required|integer',
-            'package_category' => 'required|string',
-            'package_description' => 'required|string',
+            'name' => 'required|string',
+            'point' => 'required|integer',
+            'category' => 'required|string',
+            'description' => 'required|string',
+            'image' => 'string',
         ]);
 
         try {
@@ -32,40 +33,45 @@ class PackageController extends Controller
                 }
                 return $randomString;
             }
-
-            // Image::create([
-            //     'type' => $type,
-            //     'image' => env('APP_url').'/'.$varPath.$imageName,
-            //     'package_id' => $package->id
-            // ]);
-
-            $image = $request->image;
-            $varPath = 'images/food/';
+            $package = new UserPackage;
+            $package->package_name = $request->input('name');
+            $package->package_point = $request->input('point');
+            $package->package_category = $request->input('category');
+            $package->package_description = $request->input('description');
+            $package->code = generateRandomString(5);
+            $package->user_id = Auth::user()->id;
+            $package->status = 'active';
+            $images = new Image;
+            $images->image = $request->input('image');
             if(Auth::user()->role === 2){
-                if ($image === null) {
-                    $package = new UserPackage;
-                    $package->package_name = $request->input('package_name');
-                    $package->package_point = $request->input('package_point');
-                    $package->package_category = $request->input('package_category');
-                    $package->package_description = $request->input('package_description');
-                    $package->code = generateRandomString(5);
-                    $package->user_id = Auth::user()->id;
-                    $package->status = 'active';
-                    $package->save();
+                if ($images->image === '') {
+                    UserPackage::create([
+                        'package_name' => $package->package_name,
+                        'package_point' => $package->package_point,
+                        'package_category' => $package->package_category,
+                        'package_description' => $package->package_description,
+                        'code' => $package->code,
+                        'user_id' => $package->user_id,
+                        'status' => 'active'
+                    ]);
                 } else {
+                    
                     $package = new UserPackage;
-                    $package->package_name = $request->input('package_name');
-                    $package->package_point = $request->input('package_point');
-                    $package->package_category = $request->input('package_category');
-                    $package->package_description = $request->input('package_description');
+                    $package->package_name = $request->input('name');
+                    $package->package_point = $request->input('point');
+                    $package->package_category = $request->input('category');
+                    $package->package_description = $request->input('description');
                     $package->code = generateRandomString(5);
                     $package->user_id = Auth::user()->id;
                     $package->status = 'active';
                     $package->save();
+                    $images = new Image;
+                    $images->image = $request->input('image');
+
                     Image::create([
                         'type' => $package->package_category,
-                        'package_id' => $package->id,
-                        'image' => env('APP_url') . '/' . $varPath . $request->input('image')
+                        'image' => $images->image,
+                        'package_id' => $package->id
                     ]);
                 }
             }else{
@@ -89,12 +95,10 @@ class PackageController extends Controller
 
     public function edit()
     {
-        // $transaction = UserPackage::where('user_id', Auth::user()->id)->first();
         
         $code = $_GET['code'];
-        $package = new UserPackage;
         $get_package = UserPackage::where('code', $code)->first();
-        if(Auth::user()->id === $get_package->user_id){
+        if($get_package->user_id === Auth::user()->id){
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
@@ -112,6 +116,46 @@ class PackageController extends Controller
             'message' => 'failed'
         ], 400);
     }
+    }
+
+    public function update(Request $request)
+    {
+        $this->validate($request, [
+            'package_name' => 'required|string',
+            'package_point' => 'required|integer',
+            'package_category' => 'required|string',
+            'package_description' => 'required|string',
+            'package_image' => 'string'
+        ]);
+
+        $package = new UserPackage;
+        $package->package_name = $request->input('package_name');
+        $package->package_point = $request->input('package_point');
+        $package->package_category = $request->input('package_category');
+        $package->package_description = $request->input('package_description');
+        $package->code = $request->code;
+        $image = new Image;
+        $image->image = $request->input('package_image');
+        $varPath = 'image/'.$package->package_category.'/';
+        if($image->image === ''){
+            UserPackage::where('code', $request->code)->update([
+                'package_name' => $package->package_name,
+                'package_point' => $package->package_point,
+                'package_category' => $package->package_category,
+                'package_description' => $package->package_description
+            ]);
+        }else {
+            UserPackage::where('code', $request->code)->update([
+                'package_name' => $package->package_name,
+                'package_point' => $package->package_point,
+                'package_category' => $package->package_category,
+                'package_description' => $package->package_description
+            ]);
+            Image::where('package_id', $request->id )->update([
+                'type' => $package->package_category,
+                'image' => env('APP_url').'/'.$varPath.$image->image
+            ]);
+        }
     }
 
     public function detail()

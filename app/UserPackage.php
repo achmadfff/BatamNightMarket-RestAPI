@@ -32,7 +32,7 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
 
     public function image()
     {
-        return $this->hasMany('App\Image', 'package_id');
+        return $this->hasOne('App\Image', 'package_id');
     }
 
     protected $primaryKey = 'id';
