@@ -121,11 +121,11 @@ class PackageController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'package_name' => 'required|string',
-            'package_point' => 'required|integer',
-            'package_category' => 'required|string',
-            'package_description' => 'required|string',
-            'package_image' => 'string'
+            'name' => 'required|string',
+            'point' => 'required|integer',
+            'category' => 'required|string',
+            'description' => 'required|string',
+            'image' => 'string'
         ]);
 
         $package = new UserPackage;
