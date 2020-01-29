@@ -38,32 +38,43 @@ class PackageController extends Controller
             //     'image' => env('APP_url').'/'.$varPath.$imageName,
             //     'package_id' => $package->id
             // ]);
+
+            $image = $request->image;
             $varPath = 'images/food/';
-            if ($request->input('image' === null)) {
-                $package = new UserPackage;
-                $package->package_name = $request->input('package_name');
-                $package->package_point = $request->input('package_point');
-                $package->package_category = $request->input('package_category');
-                $package->package_description = $request->input('package_description');
-                $package->code = generateRandomString(5);
-                $package->user_id = Auth::user()->id;
-                $package->status = 'active';
-                $package->save();
-            } else {
-                $package = new UserPackage;
-                $package->package_name = $request->input('package_name');
-                $package->package_point = $request->input('package_point');
-                $package->package_category = $request->input('package_category');
-                $package->package_description = $request->input('package_description');
-                $package->code = generateRandomString(5);
-                $package->user_id = Auth::user()->id;
-                $package->status = 'active';
-                $package->save();
-                Image::create([
-                    'type' => $package->package_category,
-                    'package_id' => $package->id,
-                    'image' => env('APP_url') . '/' . $varPath . $request->input('image')
-                ]);
+            if(Auth::user()->role === 2){
+                if ($image === null) {
+                    $package = new UserPackage;
+                    $package->package_name = $request->input('package_name');
+                    $package->package_point = $request->input('package_point');
+                    $package->package_category = $request->input('package_category');
+                    $package->package_description = $request->input('package_description');
+                    $package->code = generateRandomString(5);
+                    $package->user_id = Auth::user()->id;
+                    $package->status = 'active';
+                    $package->save();
+                } else {
+                    $package = new UserPackage;
+                    $package->package_name = $request->input('package_name');
+                    $package->package_point = $request->input('package_point');
+                    $package->package_category = $request->input('package_category');
+                    $package->package_description = $request->input('package_description');
+                    $package->code = generateRandomString(5);
+                    $package->user_id = Auth::user()->id;
+                    $package->status = 'active';
+                    $package->save();
+                    Image::create([
+                        'type' => $package->package_category,
+                        'package_id' => $package->id,
+                        'image' => env('APP_url') . '/' . $varPath . $request->input('image')
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Failed',
+                    'data' => null
+                ], 400);
+
             }
             return response()->json([
                 'status' => 201,

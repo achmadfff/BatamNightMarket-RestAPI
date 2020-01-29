@@ -16,6 +16,7 @@
     $router->post('register', 'AuthController@register');
     $router->post('login', 'AuthController@login');
     $router->get('user/profile', ['middleware' => 'auth', 'uses' => 'UserController@profile']);
+    $router->post('user/profile/update', ['middleware' => 'auth', 'uses' => 'UserController@update']);
     $router->get('user/claim-history', ['middleware' => 'auth', 'uses' => 'UserController@histories']);
     $router->get('owner/profile', ['middleware' => 'auth', 'uses' => 'OwnerController@profile']);
     $router->get('owner/package/claim-history', ['middleware' => 'auth', 'uses' => 'OwnerController@histories']);

@@ -43,19 +43,16 @@ class ImageController extends Controller
             switch ($type) {
                 case 'event':
                     $varPath = 'images/event/';
-                    $path = ''. $varPath;
                     $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
                     File::put($path.$imageName, base64_decode($image));
                     break;
                 case 'place':
                     $varPath = 'images/place/';
-                    $path = ''. $varPath;
                     $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
                     File::put($path.$imageName, base64_decode($image));
                     break;
                 case 'food':
                     $varPath = 'images/food/';
-                    $path = ''. $varPath;
                     $imageName = rand().'-'.strtotime(date('Y-m-d H:i:s')).'.'.$extension;
                     File::put($path.$imageName, base64_decode($image));
                     break;
