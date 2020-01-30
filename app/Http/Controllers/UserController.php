@@ -102,7 +102,7 @@ class UserController extends Controller
         foreach ($transactions as $transaction => $t) {
             $data[] = [
                 'code' => $t->package->code,
-                'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
+                'image' => ($t->package->image->count() > 0 ? $t->package->image->image : null),
                 'package_name' => $t->package->package_name,
                 'category' => $t->package->package_category,
                 'price' => [

@@ -48,7 +48,7 @@ class OwnerController extends Controller
         foreach ($transactions as $t) {
             $data[] = [
                 'code' => $t->package->code,
-                'image' => ($t->package->image->count() > 0 ? $t->package->image[0]->image : null),
+                'image' => ($t->package->image->count() > 0 ? $t->package->image->image : null),
                 'package_name' => $t->package->package_name,
                 'package_category' => $t->package->package_category,
                 'price' => [
@@ -79,7 +79,7 @@ class OwnerController extends Controller
             $data[] = [
                 'code' => $package->code,
                 'name' => $package->package_name,
-                'image' => ($package->image->count() > 0  ? $package->image[0]->image : null),
+                'image' => ($package->image->count() > 0  ? $package->image->image : null),
                 'price' => [
                     'type' => 'points',
                     'value' => $package->package_point
