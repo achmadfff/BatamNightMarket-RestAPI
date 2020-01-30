@@ -106,7 +106,7 @@ class PackageController extends Controller
                     'point' => $get_package->package_point,
                     'category' => $get_package->package_category,
                     'description' => $get_package->package_description,
-                    'image' => ($get_package->image->count() > 0 ? $get_package->image[0]->image : null)
+                    'image' => ($get_package->image->count() > 0 ? $get_package->image->image : null)
                     ]
                 ], 200);
         }else{
@@ -168,7 +168,7 @@ class PackageController extends Controller
                 'message' => 'success',
                 'data' => [
                     'code' => $code,
-                    'image' => ($detail->image->count() > 0 ? $detail->image[0]->image : null),
+                    'image' => ($detail->image->count() > 0 ? $detail->image->image : null),
                     'package_name' => $detail->package_name,
                     'price' => [
                         'type' => 'points',
@@ -252,7 +252,7 @@ class PackageController extends Controller
             $data['data'][$detail] = [
                 'code' => $d->code,
                 'name' => $d->package_name,
-                'image' => ($d->image->count() > 0  ? $d->image[0]->image : null),
+                'image' => ($d->image->count() > 0  ? $d->image->image : null),
                 'price' => [
                     'type' => 'points',
                     'value' => $d->package_point
