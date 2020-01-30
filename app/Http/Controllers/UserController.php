@@ -22,6 +22,7 @@ class UserController extends Controller
                 "status" => 200,
                 "message" => "success",
                 "data" => [
+                    "code" => Auth::user()->code,
                     "name" => Auth::user()->fullname,
                     "point" => [
                         "spend" => Auth::user()->spend(),

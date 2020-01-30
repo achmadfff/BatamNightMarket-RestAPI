@@ -21,6 +21,7 @@ class OwnerController extends Controller
                 "status" => 200,
                 "message" => "success",
                 "data" => [
+                    "code" => Auth::user()->code,
                     "name" => Auth::user()->fullname,
                     "package_claimed" => $claimed,
                     "balances" => [
