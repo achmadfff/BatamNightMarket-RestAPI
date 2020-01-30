@@ -95,7 +95,6 @@ class PackageController extends Controller
 
     public function edit()
     {
-        
         $code = $_GET['code'];
         $get_package = UserPackage::where('code', $code)->first();
         if($get_package->user_id === Auth::user()->id){
@@ -160,8 +159,6 @@ class PackageController extends Controller
 
     public function detail()
     {
-        
-
         $code = $_GET['code'];
         $detail_package = new UserPackage;
         $detail = UserPackage::where('code', $code)->first();
@@ -180,7 +177,6 @@ class PackageController extends Controller
                 ],
                 'description' => $detail->package_description
             ], 200);
-        
     }
 
     public function claim(Request $request)
@@ -223,8 +219,6 @@ class PackageController extends Controller
                     'package_id' => $package->id,
                     'status' => 'claimed'
                 ]);
-
-
                 return response()->json([
                     'status' => 200,
                     'message' => 'success',
