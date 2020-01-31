@@ -15,6 +15,7 @@
     // Matches "/api/register
     $router->post('register', 'AuthController@register');
     $router->post('login', 'AuthController@login');
+    $router->get('home/information', ['middleware' => 'auth', 'uses' => 'HomeController@information']);
     $router->get('user/profile', ['middleware' => 'auth', 'uses' => 'UserController@profile']);
     $router->post('user/profile/update', ['middleware' => 'auth', 'uses' => 'UserController@update']);
     $router->get('user/claim-history', ['middleware' => 'auth', 'uses' => 'UserController@histories']);
@@ -23,6 +24,7 @@
     $router->get('owner/package/list', ['middleware' => 'auth', 'uses' => 'OwnerController@list']);
     $router->post('package/create', ['middleware' => 'auth', 'uses' => 'PackageController@register']);
     $router->post('package/claim', ['middleware' => 'auth', 'uses' => 'PackageController@claim']);
+    $router->post('package/claim-response', ['middleware' => 'auth', 'uses' => 'PackageController@response_claim']);
     $router->get('package/edit', ['middleware' => 'auth', 'uses' => 'PackageController@edit']);
     $router->post('package/update', ['middleware' => 'auth', 'uses' => 'PackageController@update']);
     $router->get('package', ['middleware' => 'auth', 'uses' => 'PackageController@detail']);

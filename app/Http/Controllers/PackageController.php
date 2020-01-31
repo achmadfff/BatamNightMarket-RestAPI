@@ -182,43 +182,17 @@ class PackageController extends Controller
     public function claim(Request $request)
     {
 
-        $package = UserPackage::where([['code', '=', $request->code], ['user_id', '=', $request->owner]])->first();
-        // $transaction = Transaction::where([['status', '=', 'claimed'],['package_id', '=',$package->id ]])->first();
-        // if ($transaction) {
-
-        //         return response()->json([
-        //             'message' => 'Package claimed'
-        //         ], 404);
-        // }else 
-        $user = User::where('id', $request->owner)->first();
+        $user = User::where('code', $request->owner)->first();
+        $package = UserPackage::where([['code', '=', $request->code], ['user_id', '=', $user->id]])->first();
 
         if ($package) {
             if (Auth::user()->point >= $package->package_point) {
-
-                $update = User::where('id', Auth::user()->id)->update([
-                    'point' => (Auth::user()->point - $package->package_point)
-                ]);
-                if ($update) {
-                    if (Auth::user()->role === 1) {
-                        User::where('id', $request->owner)->update([
-                            'point' => ($user->point + $package->package_point)
-                        ]);
-                    } else {
-                        User::where('id', $request->owner)->update([
-                            'point' => ($user->point)
-                        ]);
-                        return response()->json([
-                            'status' => 401,
-                            'message' => 'Failed',
-                            'data' => null
-                        ], 400);
-                    }
-                }
                 Transaction::create([
                     'user_id' => Auth::user()->id,
                     'package_id' => $package->id,
-                    'status' => 'claimed'
+                    'status' => 'pending'
                 ]);
+                
                 return response()->json([
                     'status' => 200,
                     'message' => 'success',
@@ -238,6 +212,53 @@ class PackageController extends Controller
                 'message' => 'The code or owner that you insert wrong'
             ], 400);
         }
+    }
+
+    public function response_claim(Request $request)
+    {
+        if (Auth::user()->role == 2) {
+            $transaction = Transaction::where([['status','=','pending'],['id','=', $request->transaction_id]])->whereHas('package', function($q){
+                $q->where('user_id', Auth::user()->id);
+            })->first();
+    
+            if ($transaction) {
+                if ($request->response == 'accept') {
+                    $transaction->status = 'claimed';
+                    $transaction->save();
+                    
+                    $owner = User::where('id', Auth::user()->id)->first();
+                    $owner->point = ($owner->point + $transaction->package->package_point);
+                    $owner->save();
+
+                    $buyer = User::where('id', $transaction->user_id)->first();
+                    $buyer->point = ($buyer->point - $transaction->package->package_point);
+                    $buyer->save();
+
+                    $response = [
+                        'status' => 200,
+                        'message' => "Claim Accepted",
+                        'data' => null
+                    ];
+                }else{
+                    $transaction->status = 'rejected';
+                    $transaction->save();
+
+                    $response = [
+                        'status' => 200,
+                        'message' => "Claim Rejected",
+                        'data' => null
+                    ];
+                }
+            }else {
+            }
+        }else{
+            $response = [
+                'status' => 200,
+                'message' => 'Account unauthorized to access this request',
+                'data' => null
+            ];
+        }
+        return response()->json($response, $response['status']);
     }
 
     public function recomendation()
