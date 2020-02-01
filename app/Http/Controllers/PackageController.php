@@ -119,41 +119,39 @@ class PackageController extends Controller
 
     public function update(Request $request)
     {
+        
         $this->validate($request, [
-            'name' => 'required|string',
-            'point' => 'required|integer',
-            'category' => 'required|string',
-            'description' => 'required|string',
-            'image' => 'string'
-        ]);
-
-        $package = new UserPackage;
-        $package->package_name = $request->input('package_name');
-        $package->package_point = $request->input('package_point');
-        $package->package_category = $request->input('package_category');
-        $package->package_description = $request->input('package_description');
-        $package->code = $request->code;
-        $image = new Image;
-        $image->image = $request->input('package_image');
-        $varPath = 'image/'.$package->package_category.'/';
-        if($image->image === ''){
-            UserPackage::where('code', $request->code)->update([
-                'package_name' => $package->package_name,
-                'package_point' => $package->package_point,
-                'package_category' => $package->package_category,
-                'package_description' => $package->package_description
+            'code' => 'required|string',
+            'package_name' => 'string',
+            'package_point' => 'integer',
+            'package_category' => 'string',
+            'package_description' => 'string',
+            'package_image' => 'string'
             ]);
-        }else {
-            UserPackage::where('code', $request->code)->update([
-                'package_name' => $package->package_name,
-                'package_point' => $package->package_point,
-                'package_category' => $package->package_category,
-                'package_description' => $package->package_description
-            ]);
-            Image::where('package_id', $request->id )->update([
-                'type' => $package->package_category,
-                'image' => env('APP_url').'/'.$varPath.$image->image
-            ]);
+            
+        $get_package = UserPackage::where([['code','=', $request->code],['user_id','=', Auth::user()->id]])->first();
+        if($get_package){
+        $get_package->package_name = $request->input('package_name');
+        $get_package->package_point = $request->input('package_point');
+        $get_package->package_category = $request->input('package_category');
+        $get_package->package_description = $request->input('package_description');
+        $get_package->save();
+        if(!$request->input('package_image') === ''){
+            $images = Image::where('package_id', '=', $get_package->id)->first();
+            $images->image = $request->input('package_image');
+            $images->save();
+        }
+            return response()->json([
+                'status' => 200,
+                'message' => 'success',
+                'data' => null
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'message' => 'failed',
+                'data' => null
+            ], 400);
         }
     }
 
