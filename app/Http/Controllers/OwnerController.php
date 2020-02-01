@@ -13,14 +13,39 @@ class OwnerController extends Controller
 
     public function profile()
     {
-        $claimed = Transaction::whereHas('package', function ($query) {
+        $claimed = Transaction::where('status', 'claimed')->whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
         })->has('user')->count();
+
         if (Auth::user()->role === 2) {
+            $pending_transaction = Transaction::where([['status', '=', 'pending']])->whereHas('package', function($q){
+                $q->where('user_id', Auth::user()->id);
+            })->orderBy('id', 'DESC')->first();
+
+            if ($pending_transaction) {
+                $popup = [
+                    "show" => true,
+                    "type" => "claim",
+                    "title" => "You got new order!",
+                    "description" => $pending_transaction->user->fullname." claiming your ".$pending_transaction->package->package_name."'s package (".$pending_transaction->package->package_point." points)",
+                    "data" => [
+                        "transaction_id" => $pending_transaction->id
+                    ]
+                ];
+            }else{
+                $popup = [
+                    "show" => false,
+                    "type" => null,
+                    "title" => null,
+                    "description" => null
+                ];
+            }
+
             return response()->json([
                 "status" => 200,
                 "message" => "success",
                 "data" => [
+                    "code" => Auth::user()->code,
                     "name" => Auth::user()->fullname,
                     "package_claimed" => $claimed,
                     "balances" => [
@@ -29,6 +54,7 @@ class OwnerController extends Controller
                     ],
                     "email" => Auth::user()->email,
                     "role" => "owner",
+                    "popup" => $popup
                 ]
             ], 200);
         } else {

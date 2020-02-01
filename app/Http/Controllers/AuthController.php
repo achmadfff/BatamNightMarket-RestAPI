@@ -27,6 +27,7 @@ class AuthController extends Controller
         try {
 
             $user = new User;
+            $user->code = strtoupper(strtotime(date("Ymd")).Str::random(10));
             $user->fullname = $request->input('fullname');
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
