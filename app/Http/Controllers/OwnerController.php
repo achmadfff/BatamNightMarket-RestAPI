@@ -70,18 +70,18 @@ class OwnerController extends Controller
         $data = [];
         $transactions = Transaction::whereHas('package', function ($query) {
             $query->where('user_id', '=', Auth::user()->id);
-        })->has('user')->get();
+        })->has('user')->orderBy('updated_at','DESC')->get();
         foreach ($transactions as $t) {
             $data[] = [
                 'code' => $t->package->code,
-                'image' => ($t->package->image->count() > 0 ? $t->package->image->image : null),
+                'image' => ($t->package->image ? $t->package->image->image : null),
                 'package_name' => $t->package->package_name,
                 'package_category' => $t->package->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $t->package->package_point
                 ],
-                'claimed_date' => $t->created_at,
+                'claimed_date' => $t->created_at->format('j F Y H:i'),
                 'description' => $t->package->package_description,
                 'claimed_by' => $t->user->fullname,
             ];
@@ -99,13 +99,13 @@ class OwnerController extends Controller
     public function list()
     {   
         $data = [];
-        $packages = UserPackage::where('user_id', Auth::user()->id)->get();
+        $packages = UserPackage::where('user_id', Auth::user()->id)->orderBy('updated_at','DESC')->get();
 
         foreach($packages as $package){
             $data[] = [
                 'code' => $package->code,
                 'name' => $package->package_name,
-                'image' => ($package->image->count() > 0  ? $package->image->image : null),
+                'image' => ($package->image ? $package->image->image : null),
                 'price' => [
                     'type' => 'points',
                     'value' => $package->package_point

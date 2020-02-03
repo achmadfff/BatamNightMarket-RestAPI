@@ -98,19 +98,19 @@ class UserController extends Controller
     {
         $data = [];
 
-        $transactions = Transaction::where('user_id', Auth::user()->id)->get();
+        $transactions = Transaction::where('user_id', Auth::user()->id)->orderBy('updated_at','DESC')->get();
 
         foreach ($transactions as $transaction => $t) {
             $data[] = [
                 'code' => $t->package->code,
-                'image' => ($t->package->image->count() > 0 ? $t->package->image->image : null),
+                'image' => ($t->package->image ? $t->package->image->image : null),
                 'package_name' => $t->package->package_name,
                 'category' => $t->package->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $t->package->package_point
                 ],
-                'claimed_date' => $t->created_at,
+                'claimed_date' => $t->created_at->format('j F Y H:i'),
                 'description' => $t->package->package_description
             ];
         };
