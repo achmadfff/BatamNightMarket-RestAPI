@@ -106,7 +106,7 @@ class PackageController extends Controller
                     'point' => $get_package->package_point,
                     'category' => $get_package->package_category,
                     'description' => $get_package->package_description,
-                    'image' => ($get_package->image->count() > 0 ? $get_package->image->image : null)
+                    'image' => ($get_package->image ? $get_package->image->image : null)
                     ]
                 ], 200);
         }else{
@@ -158,7 +158,6 @@ class PackageController extends Controller
     public function detail()
     {
         $code = $_GET['code'];
-        $detail_package = new UserPackage;
         $detail = UserPackage::where('code', $code)->first();
         
             return response()->json([
@@ -166,7 +165,7 @@ class PackageController extends Controller
                 'message' => 'success',
                 'data' => [
                     'code' => $code,
-                    'image' => ($detail->image->count() > 0 ? $detail->image->image : null),
+                    'image' => ($detail->image ? $detail->image->image : null),
                     'package_name' => $detail->package_name,
                     'price' => [
                         'type' => 'points',
@@ -271,7 +270,7 @@ class PackageController extends Controller
             $data['data'][$detail] = [
                 'code' => $d->code,
                 'name' => $d->package_name,
-                'image' => ($d->image->count() > 0  ? $d->image->image : null),
+                'image' => ($d->image ? $d->image->image : null),
                 'price' => [
                     'type' => 'points',
                     'value' => $d->package_point
