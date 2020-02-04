@@ -18,8 +18,7 @@ class UserPackage extends Model implements AuthenticatableContract, Authorizable
         'package_name', 'package_point', 'package_category', 'package_description', 'code', 'user_id',
         'status',
     ];
-
-
+    
     public function user()
     {
         return $this->belongsTo(User::class);
