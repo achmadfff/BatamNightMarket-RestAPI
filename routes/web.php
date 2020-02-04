@@ -29,7 +29,6 @@
     $router->get('package/edit', ['middleware' => 'auth', 'uses' => 'PackageController@edit']);
     $router->post('package/update', ['middleware' => 'auth', 'uses' => 'PackageController@update']);
     $router->get('package', ['middleware' => 'auth', 'uses' => 'PackageController@detail']);
-    $router->get('package/search', ['middleware' => 'auth', 'uses' => 'SearchController@search']);
     $router->post('upload/image', ['middleware' => 'auth', 'uses' => 'ImageController@store']);
     $router->get('home/user/package-recommendation', ['middleware' => 'auth', 'uses' => 'PackageController@recomendation'] );
 

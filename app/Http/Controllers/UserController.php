@@ -43,8 +43,8 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $this->validate($request,[
-            'fullname' => 'string',
-            'email' => 'email',
+            'fullname' => 'required|alpha_dash',
+            'email' => 'required|email|unique:users',
             'oldPassword' => 'string',
             'newPassword' => 'string'
         ]);
@@ -119,7 +119,8 @@ class UserController extends Controller
             return response()->json(
                 [
                     'status' => 404,
-                    'message' => 'You have not claim anything '
+                    'message' => 'You have not claim anything ',
+                    'data' => null
                 ],
                 400
             );
@@ -135,26 +136,41 @@ class UserController extends Controller
 
     public function list()
     {
-        $packages = UserPackage::all();
-        $data = [];
+        if(isset($_GET['name'])){
+            $params = $_GET['name'];
+            $package = UserPackage::where(function($q) use ($params){
+                if(isset($params)){
+                    if($params){
+                        $q->where('package_name','LIKE','%'.$params.'%');
+                        $q->orWhereHas('user', function($query) use ($params){
+                            $query->where('fullname', 'LIKE', '%'.$params.'%');
+                        });
+                    }
+                }
+            })->paginate(10);
 
-        foreach($packages as $package => $p){
-            $data[] = [
-                'code' => $p->code,
-                'name' => $p->package_name,
-                'image' => ($p->image ? $p->image->image : null),
-                'price' => [
-                    'type' => 'points',
-                    'value' => $p->package_point
-                ],
-                'description' => $p->package_description
-            ];
+            $data = ($package->count()>0 ? $package : null);
+            if($data === null){
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Packages not found',
+                    'data' => $data
+                ],400);
+            } else {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Success',
+                    'data' => $data
+                ],200);
+            }
+        } else {
+            $packages = UserPackage::paginate(10);
+            return response()->json([
+                'status' => 200,
+                'message' => 'success',
+                'data' => $packages
+            ], 200);
         }
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'success',
-            'data' => $data
-        ], 200);
     }
 }
