@@ -19,6 +19,7 @@
     $router->get('user/profile', ['middleware' => 'auth', 'uses' => 'UserController@profile']);
     $router->post('user/profile/update', ['middleware' => 'auth', 'uses' => 'UserController@update']);
     $router->get('user/claim-history', ['middleware' => 'auth', 'uses' => 'UserController@histories']);
+    $router->get('user/package/list', ['middleware' => 'auth', 'uses' => 'UserController@list']);
     $router->get('owner/profile', ['middleware' => 'auth', 'uses' => 'OwnerController@profile']);
     $router->get('owner/package/claim-history', ['middleware' => 'auth', 'uses' => 'OwnerController@histories']);
     $router->get('owner/package/list', ['middleware' => 'auth', 'uses' => 'OwnerController@list']);
@@ -28,6 +29,7 @@
     $router->get('package/edit', ['middleware' => 'auth', 'uses' => 'PackageController@edit']);
     $router->post('package/update', ['middleware' => 'auth', 'uses' => 'PackageController@update']);
     $router->get('package', ['middleware' => 'auth', 'uses' => 'PackageController@detail']);
+    $router->get('package/search', ['middleware' => 'auth', 'uses' => 'SearchController@search']);
     $router->post('upload/image', ['middleware' => 'auth', 'uses' => 'ImageController@store']);
     $router->get('home/user/package-recommendation', ['middleware' => 'auth', 'uses' => 'PackageController@recomendation'] );
 

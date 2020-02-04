@@ -132,4 +132,25 @@ class UserController extends Controller
         }
         return response()->json($response);
     }
+
+    public function list()
+    {
+        $packages = UserPackage::all();
+        $data = [];
+
+        foreach($packages as $package => $p){
+            $data[] = [
+                'code' => $p->code,
+                'name' => $p->package_name,
+                'image' => ($p->image ? $p->image->image : null),
+                'price' => [
+                    'type' => 'points',
+                    'value' => $p->package_point
+                ],
+                'description' => $p->package_description
+            ];
+        }
+
+        return response()->json($data, 200);
+    }
 }
