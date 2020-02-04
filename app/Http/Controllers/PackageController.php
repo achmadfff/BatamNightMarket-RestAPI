@@ -122,10 +122,10 @@ class PackageController extends Controller
         
         $this->validate($request, [
             'code' => 'required|string',
-            'package_name' => 'string',
-            'package_point' => 'integer',
-            'package_category' => 'string',
-            'package_description' => 'string',
+            'package_name' => 'required|string',
+            'package_point' => 'required|integer',
+            'package_category' => 'required|string',
+            'package_description' => 'required|string',
             'package_image' => 'string'
             ]);
             
@@ -260,7 +260,7 @@ class PackageController extends Controller
 
     public function recomendation()
     {
-        $detail_package = UserPackage::limit(5)->get();
+        $detail_package = UserPackage::inRandomOrder()->limit(5)->get();
         $data = [
             'status' => 200,
             'message' => 'success',
@@ -275,7 +275,10 @@ class PackageController extends Controller
                     'type' => 'points',
                     'value' => $d->package_point
                 ],
-                'description' => $d->package_description
+                'description' => $d->package_description,
+                'industry' => [
+                    'name' => $d->user->fullname
+                ]
             ];
         }
         return response()->json($data, 200);

@@ -110,7 +110,10 @@ class OwnerController extends Controller
                     'type' => 'points',
                     'value' => $package->package_point
                 ],
-                'description' => $package->package_description
+                'description' => $package->package_description,
+                'industry' => [
+                    'name' => $package->user->fullname
+                ]
             ];
         };
 
