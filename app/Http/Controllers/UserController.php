@@ -151,6 +151,10 @@ class UserController extends Controller
             ];
         }
 
-        return response()->json($data, 200);
+        return response()->json([
+            'status' => 200,
+            'message' => 'success',
+            'data' => $data
+        ], 200);
     }
 }
