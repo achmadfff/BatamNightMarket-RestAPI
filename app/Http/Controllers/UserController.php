@@ -149,7 +149,25 @@ class UserController extends Controller
                 }
             })->paginate(10);
 
-            $data = ($package->count()>0 ? $package : null);
+            $data = [];
+
+            foreach ($package as $package => $p) {
+                $data[] = [
+                    'code' => $p->code,
+                    'image' => ($p->image ? $p->image->image : null),
+                    'name' => $p->package_name,
+                    'category' => $p->package_category,
+                    'price' => [
+                        'type' => 'points',
+                        'value' => $p->package_point
+                    ],
+                    'description' => $p->package_description,
+                    'industry' => [
+                        'name' => $p->user->fullname
+                    ]
+                ];
+            };
+
             if($data === null){
                 return response()->json([
                     'status' => 400,
@@ -164,11 +182,31 @@ class UserController extends Controller
                 ],200);
             }
         } else {
+            $data = [];
+
             $packages = UserPackage::paginate(10);
+            
+            foreach ($packages as $package => $p) {
+            $data[] = [
+                'code' => $p->code,
+                'image' => ($p->image ? $p->image->image : null),
+                'name' => $p->package_name,
+                'category' => $p->package_category,
+                'price' => [
+                    'type' => 'points',
+                    'value' => $p->package_point
+                ],
+                'description' => $p->package_description,
+                'industry' => [
+                    'name' => $p->user->fullname
+                ]
+            ];
+        };
+
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
-                'data' => $packages
+                'data' => $data
             ], 200);
         }
 
