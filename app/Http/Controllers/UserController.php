@@ -156,7 +156,6 @@ class UserController extends Controller
                     'code' => $p->code,
                     'image' => ($p->image ? $p->image->image : null),
                     'name' => $p->package_name,
-                    'category' => $p->package_category,
                     'price' => [
                         'type' => 'points',
                         'value' => $p->package_point
@@ -168,11 +167,11 @@ class UserController extends Controller
                 ];
             };
 
-            if($data === null){
+            if($data === []){
                 return response()->json([
                     'status' => 400,
                     'message' => 'Packages not found',
-                    'data' => $data
+                    'data' => null
                 ],400);
             } else {
                 return response()->json([
@@ -191,7 +190,6 @@ class UserController extends Controller
                 'code' => $p->code,
                 'image' => ($p->image ? $p->image->image : null),
                 'name' => $p->package_name,
-                'category' => $p->package_category,
                 'price' => [
                     'type' => 'points',
                     'value' => $p->package_point
