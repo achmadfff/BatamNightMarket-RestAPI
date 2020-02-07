@@ -43,7 +43,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $this->validate($request,[
-            'fullname' => 'required|alpha_dash',
+            'fullname' => 'required|alpha',
             'email' => 'required|email|unique:users,email,'.Auth::user()->id,
             'oldPassword' => 'string',
             'newPassword' => 'string'
