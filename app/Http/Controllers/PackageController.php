@@ -55,7 +55,7 @@ class PackageController extends Controller
                         'status' => 'active'
                     ]);
                 } else {
-                    
+
                     $package = new UserPackage;
                     $package->package_name = $request->input('name');
                     $package->package_point = $request->input('point');
@@ -119,7 +119,7 @@ class PackageController extends Controller
 
     public function update(Request $request)
     {
-        
+
         $this->validate($request, [
             'code' => 'required|string',
             'package_name' => 'required|string',
@@ -128,7 +128,7 @@ class PackageController extends Controller
             'package_description' => 'required|string',
             'package_image' => 'string'
             ]);
-            
+
         $get_package = UserPackage::where([['code','=', $request->code],['user_id','=', Auth::user()->id]])->first();
         if($get_package){
         $get_package->package_name = $request->input('package_name');
@@ -136,7 +136,7 @@ class PackageController extends Controller
         $get_package->package_category = $request->input('package_category');
         $get_package->package_description = $request->input('package_description');
         $get_package->save();
-        if(!$request->input('package_image') === ''){
+        if($request->input('package_image') !== ''){
             $images = Image::where('package_id', '=', $get_package->id)->first();
             $images->image = $request->input('package_image');
             $images->save();
@@ -159,7 +159,7 @@ class PackageController extends Controller
     {
         $code = $_GET['code'];
         $detail = UserPackage::where('code', $code)->first();
-        
+
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
@@ -189,7 +189,7 @@ class PackageController extends Controller
                     'package_id' => $package->id,
                     'status' => 'pending'
                 ]);
-                
+
                 return response()->json([
                     'status' => 200,
                     'message' => 'success',
@@ -217,12 +217,12 @@ class PackageController extends Controller
             $transaction = Transaction::where([['status','=','pending'],['id','=', $request->transaction_id]])->whereHas('package', function($q){
                 $q->where('user_id', Auth::user()->id);
             })->first();
-    
+
             if ($transaction) {
                 if ($request->response == 'accept') {
                     $transaction->status = 'claimed';
                     $transaction->save();
-                    
+
                     $owner = User::where('id', Auth::user()->id)->first();
                     $owner->point = ($owner->point + $transaction->package->package_point);
                     $owner->save();
@@ -260,24 +260,39 @@ class PackageController extends Controller
 
     public function recomendation()
     {
-        $detail_package = UserPackage::inRandomOrder()->limit(5)->get();
+        // $packages = UserPackage::whereHas('transaction', function ($query){
+        //     $query->where('status','=','claimed')->groupBy('package_id');
+        // })->limit(10)->get();
+        // $t = Transaction::orderBy('created_at', 'DESC');
+        // $transactions = Transaction::selectRaw("({$t->toSql()}) as sub")
+        //         ->groupBy('package_id')
+        //         ->limit(5)
+        //         ->get();
+        // $transactions = Transaction::limit(5)->sortBy('package_id')->groupBy('package_id')->get();
+        $transactions = Transaction::with('package')
+        ->selectRaw('*, max(created_at) as created_at')
+        ->orderBy('created_at', 'desc')
+        ->groupBy('package_id')
+        ->limit(5)
+        ->get();
+        // $packages = UserPackage::has('transaction')->limit(5)->get();
         $data = [
             'status' => 200,
             'message' => 'success',
             'data' => []
         ];
-        foreach ($detail_package as $detail => $d) {
+        foreach ($transactions as $detail => $d) {
             $data['data'][$detail] = [
-                'code' => $d->code,
-                'name' => $d->package_name,
-                'image' => ($d->image ? $d->image->image : null),
+                'code' => $d->package->code,
+                'name' => $d->package->package_name,
+                'image' => ($d->package->image ? $d->package->image->image : null),
                 'price' => [
                     'type' => 'points',
-                    'value' => $d->package_point
+                    'value' => $d->package->package_point
                 ],
-                'description' => $d->package_description,
+                'description' => $d->package->package_description,
                 'industry' => [
-                    'name' => $d->user->fullname
+                    'name' => $d->package->user->fullname
                 ]
             ];
         }

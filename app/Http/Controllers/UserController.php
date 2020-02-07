@@ -44,7 +44,7 @@ class UserController extends Controller
     {
         $this->validate($request,[
             'fullname' => 'required|alpha_dash',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users,email,'.Auth::user()->id,
             'oldPassword' => 'string',
             'newPassword' => 'string'
         ]);
@@ -55,8 +55,8 @@ class UserController extends Controller
         $oldPassword = $request->input('oldPassword');
         $newPassword = $request->input('newPassword');
         $user->password = app('hash')->make($newPassword);
-        
-        
+
+
             if($oldPassword === '' || $newPassword === ''){
                 $update = User::where('id', Auth::user()->id)->update([
                     'fullname' => $user->fullname,
@@ -91,7 +91,7 @@ class UserController extends Controller
                     ],201);
                 }
             }
-        
+
     }
 
     public function histories()
@@ -184,7 +184,7 @@ class UserController extends Controller
             $data = [];
 
             $packages = UserPackage::paginate(10);
-            
+
             foreach ($packages as $package => $p) {
             $data[] = [
                 'code' => $p->code,
