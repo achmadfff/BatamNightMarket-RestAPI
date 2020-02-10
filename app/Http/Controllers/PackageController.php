@@ -171,8 +171,8 @@ class PackageController extends Controller
                         'type' => 'points',
                         'value' => $detail->package_point
                     ],
+                    'description' => $detail->package_description
                 ],
-                'description' => $detail->package_description
             ], 200);
     }
 
