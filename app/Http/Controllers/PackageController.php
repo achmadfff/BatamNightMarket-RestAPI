@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 
 class PackageController extends Controller
 {
+
     public function register(Request $request)
     {
         $this->validate($request, [
@@ -23,22 +24,14 @@ class PackageController extends Controller
         ]);
 
         try {
-            function generateRandomString($length = 20)
-            {
-                $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                $charactersLength = strlen($characters);
-                $randomString = '';
-                for ($i = 0; $i < $length; $i++) {
-                    $randomString .= $characters[rand(0, $charactersLength - 1)];
-                }
-                return $randomString;
-            }
+
+
             $package = new UserPackage;
             $package->package_name = $request->input('name');
             $package->package_point = $request->input('point');
             $package->package_category = $request->input('category');
             $package->package_description = $request->input('description');
-            $package->code = generateRandomString(5);
+            $package->code = $this->packagecode();
             $package->user_id = Auth::user()->id;
             $package->status = 'active';
             $images = new Image;
@@ -61,7 +54,7 @@ class PackageController extends Controller
                     $package->package_point = $request->input('point');
                     $package->package_category = $request->input('category');
                     $package->package_description = $request->input('description');
-                    $package->code = generateRandomString(5);
+                    $package->code = $this->packagecode();
                     $package->user_id = Auth::user()->id;
                     $package->status = 'active';
                     $package->save();
@@ -86,7 +79,7 @@ class PackageController extends Controller
                 'status' => 201,
                 'message' => 'success',
                 'data' => null
-            ], 201);
+            ], 200);
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'Package Registration Failed!'], 409);
@@ -113,7 +106,7 @@ class PackageController extends Controller
         return response()->json([
             'status' => 400,
             'message' => 'failed'
-        ], 400);
+        ], 200);
     }
     }
 
@@ -151,7 +144,7 @@ class PackageController extends Controller
                 'status' => 400,
                 'message' => 'failed',
                 'data' => null
-            ], 400);
+            ], 200);
         }
     }
 
@@ -171,8 +164,8 @@ class PackageController extends Controller
                         'type' => 'points',
                         'value' => $detail->package_point
                     ],
+                    'description' => $detail->package_description
                 ],
-                'description' => $detail->package_description
             ], 200);
     }
 
@@ -200,14 +193,14 @@ class PackageController extends Controller
                 return response()->json([
                     'status' => 400,
                     'message' => 'Your points are not enough'
-                ], 400);
+                ], 200);
             }
         } else {
             // Response gagal
             return response()->json([
                 'status' => 400,
                 'message' => 'The code or owner that you insert wrong'
-            ], 400);
+            ], 200);
         }
     }
 
@@ -260,29 +253,15 @@ class PackageController extends Controller
 
     public function recomendation()
     {
-        // $packages = UserPackage::whereHas('transaction', function ($query){
-        //     $query->where('status','=','claimed')->groupBy('package_id');
-        // })->limit(10)->get();
-        // $t = Transaction::orderBy('created_at', 'DESC');
-        // $transactions = Transaction::selectRaw("({$t->toSql()}) as sub")
-        //         ->groupBy('package_id')
-        //         ->limit(5)
-        //         ->get();
-        // $transactions = Transaction::limit(5)->sortBy('package_id')->groupBy('package_id')->get();
+        $data = [];
         $transactions = Transaction::with('package')
         ->selectRaw('*, max(created_at) as created_at')
         ->orderBy('created_at', 'desc')
         ->groupBy('package_id')
         ->limit(5)
         ->get();
-        // $packages = UserPackage::has('transaction')->limit(5)->get();
-        $data = [
-            'status' => 200,
-            'message' => 'success',
-            'data' => []
-        ];
         foreach ($transactions as $detail => $d) {
-            $data['data'][$detail] = [
+            $data[] = [
                 'code' => $d->package->code,
                 'name' => $d->package->package_name,
                 'image' => ($d->package->image ? $d->package->image->image : null),
@@ -296,6 +275,25 @@ class PackageController extends Controller
                 ]
             ];
         }
-        return response()->json($data, 200);
+        return response()->json([
+            'status' => 200,
+            'message' => 'success',
+            'data' => $data
+        ], 200);
+    }
+
+    public function packagecode($length = 5)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[mt_rand(0, $charactersLength - 1)];
+        }
+        $check = UserPackage::where('code', $randomString)->exists();
+        if($check){
+            return $this->packagecode();
+        }
+        return $randomString;
     }
 }
